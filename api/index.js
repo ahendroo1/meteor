@@ -39,8 +39,11 @@ router.get('/data/:product', (req, res)=>{
 })
 
 router.post('/data', (req, res)=>{
-    var data_product = { nama: req.body.nama_product,
-        kode_kategori: req.body.kode_product, harga: req.body.harga,
+    var data_product = { 
+        kode_product: '1',
+        kode_kategori: req.body.kode_kategori,
+        nama_product: req.body.nama_product,
+        harga: req.body.harga,
     }
 
     var run_sql = 'insert into tb_product set ?'
