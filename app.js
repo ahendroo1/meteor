@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 var renderer = require('./api/index');
 var login = require('./api/login');
+var register = require('./api/register');
 var compress = require('compression');
 
 app.use(cors());
@@ -14,6 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
  
 app.use('/api',  renderer);
 app.use('/api/login',  login);
+app.use('/api/register',  register);
 
 app.listen(port, () => {
     console.log('server active');
