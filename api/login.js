@@ -22,9 +22,9 @@ router.post('/post', cekToken,(req, res) => {
             res.sendStatus(403)
         } else {
             res.json({
-                message: 'okkk post',
+                message: 'Success post',
                 authData
-            })
+            })  
         }
     })
 
@@ -53,8 +53,6 @@ router.post('/',  (req, res) => {
 
 
 });
-
-// Token Bearer <access_token>
 
 function cekToken(req, res, next){
 

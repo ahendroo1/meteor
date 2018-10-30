@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
+var jwt = require('jsonwebtoken');
+var bcrypt = require('bcrypt');
 
 const db = mysql.createConnection({
     host: 'localhost',
@@ -19,22 +21,53 @@ router.get('/', function (req, res) {
 });
 
 // get data
-router.get('/data', (req, res)=>{
+router.post('/data', cekToken, (req, res)=>{
+
+
     var run_sql = 'SELECT * FROM tb_product INNER JOIN tb_kategori ON tb_product.kode_kategori=tb_kategori.kode_kategori';
     db.query(run_sql, (error, hasil)=>{
 
-        console.log(hasil);
-        res.send(hasil);
+        // console.log(hasil);
+        // res.send(hasil);
+
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err){
+                res.sendStatus(403)
+            } else {
+                res.json({
+                    message: 'Success post',
+                    authData,
+                    hasil
+                })  
+            }
+        })
     })
+
+    
+
 })
 
-router.get('/data/:product', (req, res)=>{
+router.post('/data/:product', cekToken, (req, res)=>{
+
+
     var sql_run = 
     `select * from tb_product where nama_product = ?`;
     db.query(sql_run, req.params.product, (error, hasil)=>{
         if(error) throw error;
-        console.log(hasil);
-        res.send(hasil);
+        // console.log(hasil);
+        // res.send(hasil);
+
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err){
+                res.sendStatus(403)
+            } else {
+                res.json({
+                    message: 'Success post',
+                    authData,
+                    hasil
+                })  
+            }
+        })
     })
 })
 
@@ -55,4 +88,25 @@ router.post('/data', (req, res)=>{
 })
 
 
+
+
+function cekToken(req, res, next){
+
+    const bearerHeader = req.headers['authorization'];
+
+    if (typeof bearerHeader !== 'undefined'){
+
+        const bearer = bearerHeader.split(' ');
+
+        const bearerToken = bearer[1];
+
+        req.token = bearerToken ;
+
+        next();
+
+    } else {
+        res.sendStatus(403)
+    }
+
+}
 module.exports = router ;
