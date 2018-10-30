@@ -71,23 +71,72 @@ router.post('/data/:product', cekToken, (req, res)=>{
     })
 })
 
-router.post('/data', (req, res)=>{
-    var data_product = { 
-        kode_product: '1',
-        kode_kategori: req.body.kode_kategori,
-        nama_product: req.body.nama_product,
-        harga: req.body.harga,
+router.post('/product/add', (req, res)=>{
+
+    if (req.body.kode_kategori && req.body.nama_product && req.body.harga) {
+
+        var data_product = { 
+            kode_product: Math.floor(Math.random() * 10000000)+7 ,
+            kode_kategori: req.body.kode_kategori,
+            nama_product: req.body.nama_product,
+            harga: req.body.harga,
+        }
+    
+        var run_sql = 'insert into tb_product set ?'
+        db.query(run_sql, data_product, (error, hasil)=>{
+            if(error) throw error;
+            console.log(hasil);
+            res.send(hasil)
+        })
+
+    } else {
+        res.sendStatus(403)
     }
 
-    var run_sql = 'insert into tb_product set ?'
-    db.query(run_sql, data_product, (error, hasil)=>{
-        if(error) throw error;
-        console.log(hasil);
-        res.send(hasil)
-    })
 })
 
+router.put('/product/update/:id', (req, res) => {
+    if (req.params.id){
 
+        var data = { 
+            kode_kategori: req.body.kode_kategori,
+            nama_product: req.body.nama_product, 
+            harga: req.body.harga
+        }
+        var run_sql = 
+        'update tb_product set ? where id_product = ?'
+        db.query(run_sql, [data, req.params.id], (error, hasil)=>{
+            if(error) throw error;
+            console.log(hasil);
+            res.send(hasil)
+        })
+
+    } else {
+
+        res.sendStatus(403)
+
+    }
+})
+
+router.delete('/product/delete/:id', (req, res)=>{
+
+    if(req.params.id){
+
+        var run_sql = 
+        'delete from tb_product where id_product = ?'
+        db.query(run_sql, req.params.id, (error, hasil)=>{
+            if(error) throw error;
+            console.log(hasil);
+            res.send(hasil)
+        })
+
+    } else {
+
+        res.sendStatus(404)
+
+    }
+
+})
 
 
 function cekToken(req, res, next){
